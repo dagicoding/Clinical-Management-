@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab request</title>
+</head>
+<body>
+    <h3>Lab request for {{visit.patient.name}}</h3>
+    <p>Choose the lab requests</p>
+    <div class="requests" style="display:flex; gap:10px; wrap:wrap;">
+    {% for labtest in labtests  %}
+        <div class="form-group" style =  "border:1px solid black; width:100px; text-align:center; padding:10px;">
+            <h4>{{labtest.name}}</h4>
+            <a href="{% url 'add_lab_test' visit.id labtest.id %}">Add</a>
+        </div>
+    {% endfor %}
+    </div>
+
+    <h2>Selected lab Tests</h2>
+    <table>
+        <thead>
+            <tr>Request</tr>
+            <tr>Action</tr>
+        </thead>
+        <tbody>
+            {% for selected_test in  selected_tests %}
+                <tr>
+                    <td>{{selected_test.name}}</td>
+                   <td><a href="{% url 'delete_lab_test' visit.id selected_test.id %}">Delete</a></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>No test added</td>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <td><a href="{% url 'send_lab_request' visit.id %}">Send Lab Request</a></td>
+                </tr>
+            
+           
+        </tbody>
+    </table>
+     <label>total: </label>{{total}}
+    
+</body>
+</html>

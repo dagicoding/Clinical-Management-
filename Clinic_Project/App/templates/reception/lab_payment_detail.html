@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request detail</title>
+</head>
+<body>
+<h2>Lab Payment</h2>
+<h3>Patient: {{ visit.patient.name }}</h3>
+<p>Patient ID: {{ visit.patient.id }}</p>
+<table>
+    <thead>
+        <tr>
+            <th>Lab Test</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for lab_request in lab_requests %}
+            <tr>
+                <td>{{ lab_request.lab_test.name }}</td>
+                <td>{{ lab_request.lab_test.price }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Total: {{ total }}</h3>
+
+
+   <form method="POST" action="{% url 'confirm_lab_payment' visit.id %}">
+    {% csrf_token %}
+    <button type="submit">Confirm Payment</button>
+    </form>
+
+    
+</body>
+</html>

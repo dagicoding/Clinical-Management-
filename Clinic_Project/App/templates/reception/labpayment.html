@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Payment</title>
+</head>
+<body>
+    <h1>Hi, reception</h1>    
+    <h2>Lab Payments</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Patient ID</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for item in visits %}
+
+            <tr>
+                <td>{{ item.visit.patient.name }}</td>
+
+                <td>{{ item.visit.patient.id }}</td>
+
+                <td>
+                    <a href="{% url 'lab_payment_detail' item.visit.id %}">
+                        View
+                    </a>
+                </td>
+            </tr>
+
+        {% empty %}
+
+            <tr>
+                <td colspan="3">
+                    No unpaid lab requests.
+                </td>
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+</body>
+</html>

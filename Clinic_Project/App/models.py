@@ -133,6 +133,8 @@ class LabRequest(models.Model):
 class LabResult(models.Model):
     lab_request = models.OneToOneField(LabRequest,on_delete=models.CASCADE,related_name='result')
     result = models.TextField()
+    status_choice = [('not_arrived', 'Not Arrived'),('Arrived' , 'Arrived')]
+    status = models.CharField(choices= status_choice)
     completed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
