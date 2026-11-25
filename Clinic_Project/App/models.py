@@ -21,9 +21,9 @@ class Patient(models.Model):
 
 class Payment(models.Model):
     patient = models.ForeignKey(Patient ,on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10 , decimal_places=2)
+    amount = models.DecimalField(max_digits=10 , decimal_places=2)  
     PAYMENT_TYPES = [
-        ('registration' , 'Registration'),
+        ('card' , 'card'),
         ('lab' , 'Lab'),
         ('medication' , 'Medication'),
         ('other' , 'Other')
@@ -37,6 +37,13 @@ class Payment(models.Model):
     def __str__(self):
         return f'{self.patient.name} {self.payment_type} {self.amount}'
 
+class ServiceFee(models.Model):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"card fee- {self.amount}"
+
+
 
 class Visit(models.Model):
     status_choice = [
@@ -47,7 +54,7 @@ class Visit(models.Model):
         ('incomplete' , 'InComplete')
     ]
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    status = models.CharField(choices=status_choice, default='With Nurse')
+    status = models.CharField(choices=status_choice, default='waiting')
     visit_date = models.DateTimeField(auto_now_add=True)
 
 

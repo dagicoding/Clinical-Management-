@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>doctor</title>
+</head>
+<body>
+    <h1>Hi, doctor</h1>
+    {% for visit in visits %}
+    <div class="form-group" style ="border:1px solid black; width:200px; padding:10px;">
+        <lable>patient name: {{visit.patient.name}}</lable> <br>
+        <a href="{% url 'treatPatient' visit.id %}">Treat Patient</a>
+    </div>
+    {% endfor %}
+    
+</body>
+</html>

@@ -10,7 +10,9 @@
     <form action="{% url 'patient_register' %}"method = "POST">
         {% csrf_token %}
         {{form.as_p}}
+        Card payment -- {{card}} birr <br>
         <button type = "submit">Register</button>
     </form>
+
 </body>
 </html>

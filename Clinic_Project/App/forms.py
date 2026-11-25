@@ -1,5 +1,5 @@
 from django import forms
-from . models import Patient , Visit
+from . models import *
 
 
 class PatientForm(forms.ModelForm):
@@ -18,3 +18,15 @@ class PatientForm(forms.ModelForm):
         widgets = {
             "date_of_birth": forms.DateInput(),
         }
+
+
+class VitalSignForm(forms.ModelForm):
+    class Meta:
+        model = VitalSigns
+        fields =['weight','temprature','blood_pressure','pulse','respiratory']
+
+
+class ClinicalNoteForm(forms.ModelForm):
+    class Meta:
+        model = ClinicalNote
+        fields = ['Chife_complaint','physical_examination','assessment','plan']

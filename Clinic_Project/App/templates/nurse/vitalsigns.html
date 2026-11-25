@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vital Signs record</title>
+</head>
+<body>
+    <h1> Hi, nurse</h1>
+    <h4>Recored vital sign</h4>
+    <label>patient name: {{visit.patient.name}}</label>
+    {% if VitalSigns %}
+        <h4>it's already filled</h4>
+    {% else %}
+        <form method = "POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type= "Submit">Save vital signs</button>
+    </form>
+
+    {% endif %}
+    
+    
+</body>
+</html>

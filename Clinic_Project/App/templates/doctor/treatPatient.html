@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treat</title>
+</head>
+<body>
+    <div class="Patient_info">
+        <h3>Patient Info</h3>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <td>{{visit.patient.name}}</td>
+                </tr>
+                <tr>
+                    <th>Age</th>
+                    <td>{{visit.patient.date_of_birth}}</td>
+                </tr>
+                <tr>
+                    <th>Allergy</th>
+                    <td>{{visit.patient.allergy}}</td>
+                </tr>
+                <tr>
+                    <th>Zone</th>
+                    <td>{{visit.patient.zone}}</td>
+                </tr>
+                <tr>
+                    <th>City</th>
+                    <td>{{visit.patient.city}}</td>
+                </tr>
+                <tr>
+                    <th>Phone</th>
+                    <td>{{visit.patient.phone}}</td>
+                </tr>
+            </table>
+    </div>
+
+    <div class="vital_signs">
+        <h3>Vital Signs</h3>
+            <table>
+                <tr>
+                    <th>weight</th>
+                    <td>{{vital_signs.weight}}</td>
+                </tr>
+                <tr>
+                    <th>Temp</th>
+                    <td>{{vital_signs.temprature}}</td>
+                </tr>
+                <tr>
+                    <th>Blood pressure</th>
+                    <td>{{vital_signs.blood_pressure }}</td>
+                </tr>
+                <tr>
+                    <th>Puls</th>
+                    <td>{{vital_signs.pulse}}</td>
+                </tr>
+                <tr>
+                    <th>Respiratory Rate</th>
+                    <td>{{vital_signs.respiratory}}</td>
+                </tr>
+            </table>
+    </div>
+
+
+    <a href="{% url 'clinicalNote' visit.id %}">Clinical Note</a>
+    <a href="#">Lab request</a>
+    <a href="#">Lab result</a>
+    <a href="#">prescription</a>
+    <a href="#">Medication</a>
+    <a href="#">Certificate</a>
+    
+</body>
+</html>
