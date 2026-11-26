@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Result</title>
+</head>
+<body>
+    <h1>lab result for {{visit.patient.name}}</h1>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Result</title>
+</head>
+<body>
+   
+    <table>
+        <thead>
+            <tr>
+                <th>Request</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        {% for labresult in labresults %}
+            <tbody>
+                <tr>
+                    <td>{{labresult.lab_request.lab_test.name}}</td>
+                    <td>{{labresult.result}}</td>
+                </tr>
+            </tbody>
+        {% empty %}
+                <p>no lab result avaliable</p>
+            {% endfor %}
+    </table>
+
+    
+    
+</body>
+</html>
+
+    
+    
+</body>
+</html>

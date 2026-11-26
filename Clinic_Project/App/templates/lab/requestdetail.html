@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lab detail</title>
+</head>
+<body>
+  <h2>
+    Patient: {{ visit.patient.name }}
+</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Lab Test</th>
+                <th>Result</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for labrequest in labrequests %}
+            <tr>
+                <td>
+                    {{ labrequest.lab_test.name }}
+                </td>
+                <td>
+                    <input type="text"name="result_{{ labrequest.id }}"value="{{ labrequest.result.result }}">
+                </td>
+                <td>
+                    {{ labrequest.result.get_status_display }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <button type="submit">Save All Results</button>
+
+</form>
+    
+</body>
+</html>

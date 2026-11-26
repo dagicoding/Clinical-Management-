@@ -65,8 +65,8 @@
 
     <a href="{% url 'clinicalNote' visit.id %}">Clinical Note</a>
     <a href="{% url 'labRequest' visit.id %}">Lab request</a>
-    <a href="#">Lab result</a>
-    <a href="#">prescription</a>
+    <a href="{% url 'labresults'  visit.id%}">Lab result</a>
+    <a href="{% url 'prescription' visit.id %}">prescription</a>
     <a href="#">Medication</a>
     <a href="#">Certificate</a>
     

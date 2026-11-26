@@ -36,5 +36,12 @@
     </form>
 
     
+   <form method="POST" action="{% url 'delete_lab_payment' visit.id %}">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+    </form>
+    
+
+    
 </body>
 </html>

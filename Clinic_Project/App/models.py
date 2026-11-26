@@ -50,6 +50,7 @@ class Visit(models.Model):
         ('waiting' ,'Waiting'),
         ('nurse' , 'With Nurse'),
         ('doctor' , 'With Doctor'),
+        ('lab' , 'Lab'),
         ('completed' , 'Completed'),
         ('incomplete' , 'InComplete')
     ]
@@ -132,7 +133,7 @@ class LabRequest(models.Model):
 
 class LabResult(models.Model):
     lab_request = models.OneToOneField(LabRequest,on_delete=models.CASCADE,related_name='result')
-    result = models.TextField()
+    result = models.CharField(blank=True)
     status_choice = [('not_arrived', 'Not Arrived'),('Arrived' , 'Arrived')]
     status = models.CharField(choices= status_choice)
     completed_at = models.DateTimeField(auto_now_add=True)
@@ -144,7 +145,10 @@ class LabResult(models.Model):
     
 
 class PrescriptionTemplate(models.Model):
-    name = models.CharField()
+    name = models.CharField()   
+
+    def __str__(self):
+        return self.name
 
 
 
@@ -152,6 +156,9 @@ class Prescription(models.Model):
     visit = models.OneToOneField(Visit, on_delete=models.CASCADE)
     prescription = models.ForeignKey(PrescriptionTemplate, on_delete=models.CASCADE, related_name='prescriptions')
     prescribed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.visit.patient.name} - prescription'
 
 
 class Medication(models.Model):

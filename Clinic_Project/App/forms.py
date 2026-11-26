@@ -16,7 +16,7 @@ class PatientForm(forms.ModelForm):
             'emergency_contact'
         ]
         widgets = {
-            "date_of_birth": forms.DateInput(),
+            "date_of_birth": forms.DateInput(attrs={'type' : "Date"}),
         }
 
 
@@ -30,3 +30,13 @@ class ClinicalNoteForm(forms.ModelForm):
     class Meta:
         model = ClinicalNote
         fields = ['Chife_complaint','physical_examination','assessment','plan']
+
+class LabResultForm(forms.ModelForm):
+    class Meta:
+        model = LabResult
+        fields = ['lab_request','result']
+
+class PrescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Prescription
+        fields = ['prescription']

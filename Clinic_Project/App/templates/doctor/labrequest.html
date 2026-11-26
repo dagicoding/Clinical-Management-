@@ -35,13 +35,14 @@
                 </tr>
             {% endfor %}
                 <tr>
-                    <td><a href="{% url 'send_lab_request' visit.id %}">Send Lab Request</a></td>
+                    <!--<td><a href="{% url 'send_lab_request' visit.id %}">Send Lab Request</a></td>-->
                 </tr>
             
            
         </tbody>
     </table>
-     <label>total: </label>{{total}}
+     <label>total: </label>{{total}} <br>
+     <a href="{% url 'send_lab_request' visit.id %}">Send Lab Request</a>
     
 </body>
 </html>
