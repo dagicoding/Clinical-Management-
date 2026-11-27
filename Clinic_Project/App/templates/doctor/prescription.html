@@ -1,16 +1,186 @@
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>prescription</title>
+
+    <title>Prescription</title>
+
+    <style>
+
+        .prescription-card {
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 15px 0;
+            width: 300px;
+            border-radius: 8px;
+        }
+
+        .prescription-list {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+    </style>
 </head>
+
 <body>
-    <h3>prescription for {{visit.patient.name}} </h3>
-    <form method = "POST">
+
+<h3>
+    Prescription for {{ visit.patient.name }}
+</h3>
+
+
+<!-- SAVED PRESCRIPTION GROUPS -->
+
+{% for group in grouped_prescriptions %}
+
+    <div class="prescription-card">
+
+        <h4>
+          {{ visit.patient.name }} 
+        </h4>
+
+        <p>
+            {{ group.prescription_group|naturaltime}}
+        </p>
+
+        <button
+            type="button"
+            onclick="showPrescription('{{ forloop.counter }}')">
+
+            View Prescription
+
+        </button>
+
+
+        <!-- PRESCRIPTIONS INSIDE THIS GROUP -->
+
+        <div
+            id="prescription-{{ forloop.counter }}"
+            class="prescription-list">
+
+            {% for prescription in group.prescriptions %}
+
+                <p>
+                    {{ prescription.prescription_template.name }}
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+{% empty %}
+
+    <p>No saved prescriptions.</p>
+
+{% endfor %}
+
+
+
+<!-- ADD PRESCRIPTION -->
+
+<form method="POST"
+      action="{% url 'add_prescription' visit.id %}">
+
+    {% csrf_token %}
+
+    <label>Select Prescription</label>
+
+    <select name="prescription_id" required>
+
+        <option value="">
+            -- Select Prescription --
+        </option>
+
+        {% for prescription in prescriptions %}
+
+            <option value="{{ prescription.id }}">
+                {{ prescription.name }}
+            </option>
+
+        {% endfor %}
+
+    </select>
+
+    <button type="submit">
+        Add
+    </button>
+
+</form>
+
+
+
+<!-- CURRENT CART -->
+
+<h3>Selected Prescriptions</h3>
+
+{% for prescription in selected_prescriptions %}
+
+    <p>
+
+        {{ prescription.name }}
+
+        <a href="{% url 'delete_prescription' visit.id prescription.id %}">
+            Remove
+        </a>
+
+    </p>
+
+{% empty %}
+
+    <p>No prescriptions selected.</p>
+
+{% endfor %}
+
+
+
+<!-- SAVE CART -->
+
+{% if selected_prescriptions %}
+
+    <form method="POST"
+          action="{% url 'save_prescription' visit.id %}">
+
         {% csrf_token %}
-        {{form.as_p}}
-        <button type = "submit">Save</button>
+
+        <button type="submit">
+            Save Prescriptions
+        </button>
+
     </form>
+
+{% endif %}
+
+
+
+<script>
+
+function showPrescription(id) {
+
+    const selected = document.getElementById(
+        "prescription-" + id
+    );
+
+    if (selected.style.display === "none" ||
+        selected.style.display === "") {
+
+        selected.style.display = "block";
+
+    } else {
+
+        selected.style.display = "none";
+
+    }
+
+}
+
+</script>
+
 </body>
 </html>

@@ -1,4 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
+from itertools import groupby
+from django.utils import timezone
+from itertools import groupby
+
 from . models import *
 from . forms import *
 
@@ -105,8 +109,13 @@ def vital_signs(request, visit_id):
     return render(request, 'nurse/vitalsigns.html', context)
 
 def doctorVisits(request):
-    visits = Visit.objects.filter(status = 'doctor').select_related('patient').order_by('visit_date')
-    context = {'visits' : visits}
+    visits = Visit.objects.filter(status='doctor').select_related('patient').order_by('visit_date')
+    labresult = LabResult.objects.filter(status='arrived')
+
+    for visit in visits:
+        visit.has_arrived_result = labresult.filter(lab_request__visit=visit).exists()
+
+    context = {'visits': visits,}
     return render(request, 'doctor/onvisit.html', context)
 
 
@@ -117,6 +126,12 @@ def treat_patient(request , visit_id):
     context = {'visit' : visit, 'vital_signs' : vital_signs}
     return render(request, 'doctor/treatPatient.html', context)
 
+def complete_visit(request, visit_id):
+    visit = Visit.objects.get(id = visit_id, status =  'doctor')
+    if request.method == "POST":
+            visit.status = 'completed'
+            visit.save()
+    return redirect('doctorVisits')
 
 
 def clinicalNote(request, visit_id):
@@ -151,11 +166,8 @@ def labRequest(request, visit_id):
     visit = Visit.objects.get(id=visit_id,status='doctor')
     labtests = LabTest.objects.all()
     lab_cart = request.session.get('lab_cart', {})
-
     cart = lab_cart.get(str(visit_id), [])
-
     selected_tests = LabTest.objects.filter(id__in=cart)
-
     total = sum(test.price for test in selected_tests)
 
     context = {
@@ -171,28 +183,19 @@ def labRequest(request, visit_id):
 def add_lab_test(request, visit_id, test_id):
 
     visit = Visit.objects.get(id=visit_id,status='doctor')
-
     LabTest.objects.get(id=test_id)
-
     lab_cart = request.session.get('lab_cart', {})
-
     visit_cart = lab_cart.get(str(visit_id), [])
-
     if test_id not in visit_cart:
         visit_cart.append(test_id)
 
     lab_cart[str(visit_id)] = visit_cart
-
     request.session['lab_cart'] = lab_cart
-
     return redirect('labRequest',visit_id=visit_id)
 
 def delete_lab_test(request, visit_id, test_id):
-
     visit = Visit.objects.get(id=visit_id,status='doctor')
-
     lab_cart = request.session.get('lab_cart', {})
-
     visit_cart = lab_cart.get(str(visit_id), [])
 
     if test_id in visit_cart:
@@ -205,15 +208,17 @@ def delete_lab_test(request, visit_id, test_id):
     return redirect('labRequest',visit_id=visit_id)
 
 def send_lab_request(request, visit_id):
-
     visit = Visit.objects.get(id=visit_id,status='doctor')
     lab_cart = request.session.get('lab_cart', {})
     cart = lab_cart.get(str(visit_id), [])
 
-    for test_id in cart:
-        lab_test = LabTest.objects.get(id=test_id)
-        lab_request = LabRequest.objects.create(visit=visit,lab_test=lab_test,status='not_paid')
-        LabResult.objects.create(lab_request = lab_request, status = 'not_arrived')
+    if cart:
+        request_group = timezone.now()
+
+        for test_id in cart:
+            lab_test = LabTest.objects.get(id=test_id)
+            lab_request = LabRequest.objects.create(visit=visit,lab_test=lab_test, request_group=request_group,status='not_paid')
+            LabResult.objects.create(lab_request = lab_request, status = 'not_arrived')
         
 
     lab_cart.pop(str(visit_id), None)
@@ -224,15 +229,29 @@ def send_lab_request(request, visit_id):
     return redirect('labRequest', visit_id=visit.id)
 
 def labrequestview(request):
-    visits = Visit.objects.filter(lab_request__status='paid', status = 'doctor').distinct().select_related('patient')
+    visits = Visit.objects.filter(lab_request__status='paid', status = 'doctor',lab_request__result__status='not_arrived').distinct().select_related('patient')
     context = {'visits': visits}
     return render(request,'lab/labrequest.html',context)
 
-def labrequestdetail(request,visit_id):
-    visit = Visit.objects.get(id=visit_id)
-    labrequests = LabRequest.objects.filter(visit=visit,status='paid')
+
+
+from itertools import groupby
+from django.shortcuts import get_object_or_404, redirect, render
+
+def labrequestdetail(request, visit_id):
+    visit = get_object_or_404(Visit, id=visit_id)
+
+    labrequests = LabRequest.objects.filter(visit=visit,status='paid',result__status='not_arrived').select_related('lab_test').order_by('-request_group')
+    if not labrequests.exists():
+        context = {'visit': visit,'grouped_requests': [],}
+        return render(request, 'lab/requestdetail.html', context)
+
+    latest_group = labrequests.first().request_group
+
+    labrequests = labrequests.filter(request_group=latest_group).order_by('request_group')
 
     if request.method == 'POST':
+
         for labrequest in labrequests:
             result_text = request.POST.get(f'result_{labrequest.id}')
 
@@ -243,36 +262,148 @@ def labrequestdetail(request,visit_id):
                 labresult.status = 'arrived'
                 labresult.save()
 
-        return redirect('labrequestdetail',visit_id=visit.id)
+        return redirect('labrequestview')
 
-    context = {'visit': visit,'labrequests': labrequests,}
+    grouped_requests = []
+
+    for group_time, requests in groupby(
+        labrequests,
+        key=lambda x: x.request_group
+    ):
+        grouped_requests.append({'request_group': group_time,'requests': list(requests)})
+
+    context = {'visit': visit,'grouped_requests': grouped_requests,}
     return render(request,'lab/requestdetail.html',context)
-
 
 def labResult(request, visit_id):
     visit = Visit.objects.get(id = visit_id, status = 'doctor')
-    labresults = LabResult.objects.filter(lab_request__visit=visit,status='arrived').select_related('lab_request__lab_test')
+    labresults = LabResult.objects.filter(lab_request__visit=visit,status='arrived').select_related('lab_request__lab_test').order_by('lab_request__request_group')
 
-    context = {'visit' : visit, 'labresults' : labresults}
+    grouped_results = []
+    for group_time, results in groupby(labresults,key=lambda x: x.lab_request.request_group):
+        grouped_results.append({'request_group': group_time,'results': list(results)})
+
+    context = {'visit' : visit, 'labresults' : labresults, 'grouped_results': grouped_results,}
     return render(request, 'doctor/labresult.html', context)
 
-def prescription(request, visit_id):
-    visit = Visit.objects.get(id = visit_id, status = 'doctor')
-    if request.method == "POST":
-        form =  PrescriptionForm(request.POST)
-        if form.is_valid():
-            presc = form.save(commit=False)
-            presc.visit = visit
-            presc.save()
-            
-            return redirect('treatPatient',visit_id=visit.id)
-         
-    else:
-        form = PrescriptionForm()
-    context = {'form' : form , 'visit' : visit}
-    return render(request, 'doctor/prescription.html', context)
-    
 
+
+
+
+def prescription(request, visit_id):
+    visit = get_object_or_404(Visit,id=visit_id,status='doctor')
+
+    prescriptions = PrescriptionTemplate.objects.all()
+    prescription_cart = request.session.get('prescription_cart',{})
+
+    cart = prescription_cart.get(str(visit_id),[])
+    selected_prescriptions = PrescriptionTemplate.objects.filter(id__in=cart)
+    viewprescriptions = Prescription.objects.filter(visit=visit).select_related('prescription_template').order_by('prescription_group')
+    grouped_prescriptions = []
+
+    for group_time, prescriptions_group in groupby(
+        viewprescriptions,
+        key=lambda x: x.prescription_group
+    ):
+        grouped_prescriptions.append({
+            'prescription_group': group_time,
+            'prescriptions': list(prescriptions_group)
+        })
+
+    context = {
+        'visit': visit,
+        'prescriptions': prescriptions,
+        'selected_prescriptions': selected_prescriptions,
+        'grouped_prescriptions': grouped_prescriptions,
+        'viewprescriptions' : viewprescriptions,
+    }
+    return render(request,'doctor/prescription.html',context)
+
+
+
+def add_prescription(request, visit_id):
+
+    visit = get_object_or_404(Visit,id=visit_id,status='doctor')
+    prescription_id = request.POST.get('prescription_id')
+
+    if prescription_id:
+
+        PrescriptionTemplate.objects.get(id=prescription_id)
+        prescription_cart = request.session.get('prescription_cart',{})
+
+        visit_cart = prescription_cart.get(str(visit_id),[])
+        prescription_id = int(prescription_id)
+
+        if prescription_id not in visit_cart:
+            visit_cart.append(prescription_id)
+
+        prescription_cart[str(visit_id)] = visit_cart
+        request.session['prescription_cart'] = prescription_cart
+
+    return redirect('prescription',visit_id=visit.id)
+
+
+def delete_prescription(request, visit_id, prescription_id):
+
+    visit = get_object_or_404(Visit,id=visit_id,status='doctor')
+
+    prescription_cart = request.session.get('prescription_cart',{})
+    visit_cart = prescription_cart.get(str(visit_id),[])
+
+    if prescription_id in visit_cart:
+        visit_cart.remove(prescription_id)
+
+    prescription_cart[str(visit_id)] = visit_cart
+    request.session['prescription_cart'] = prescription_cart
+    return redirect('prescription',visit_id=visit.id)
+
+
+from django.utils import timezone
+
+def save_prescription(request, visit_id):
+    visit = get_object_or_404(
+        Visit,
+        id=visit_id,
+        status='doctor'
+    )
+
+    prescription_cart = request.session.get(
+        'prescription_cart',
+        {}
+    )
+
+    cart = prescription_cart.get(
+        str(visit_id),
+        []
+    )
+
+    if cart:
+
+        # One group for the entire prescription batch
+        prescription_group = timezone.now()
+
+        for prescription_id in cart:
+
+            prescription_template = get_object_or_404(
+                PrescriptionTemplate,
+                id=prescription_id
+            )
+
+            Prescription.objects.create(
+                visit=visit,
+                prescription_template=prescription_template,
+                prescription_group=prescription_group
+            )
+
+    # Remove this visit's cart
+    prescription_cart.pop(str(visit_id), None)
+
+    request.session['prescription_cart'] = prescription_cart
+
+    return redirect(
+        'treatPatient',
+        visit_id=visit.id
+    )
 
 
     

@@ -7,12 +7,28 @@
 </head>
 <body>
     <h1>Hi, doctor</h1>
-    {% for visit in visits %}
-    <div class="form-group" style ="border:1px solid black; width:200px; padding:10px;">
-        <lable>patient name: {{visit.patient.name}}</lable> <br>
-        <a href="{% url 'treatPatient' visit.id %}">Treat Patient</a>
-    </div>
-    {% endfor %}
+{% for visit in visits %}
+<div class="form-group"
+     style="border:1px solid black; width:200px; padding:10px;">
+    <label>Patient name: {{ visit.patient.name }}</label>
+    <br>
+
+    {% if visit.has_arrived_result %}
+        <p style="
+            background-color:#4BE33D;
+            padding:2px;
+            color:white;
+            width:180px;
+        ">
+            Lab Result Arrived
+        </p>
+    {% endif %}
+
+    <a href="{% url 'treatPatient' visit.id %}">Treat Patient</a>
+
+</div>
+
+{% endfor %}
     
 </body>
 </html>

@@ -1,3 +1,4 @@
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,40 +7,45 @@
     <title>lab detail</title>
 </head>
 <body>
-  <h2>
-    Patient: {{ visit.patient.name }}
-</h2>
+<h2>Patient: {{ visit.patient.name }}</h2>
 
-<form method="POST">
-    {% csrf_token %}
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Lab Test</th>
-                <th>Result</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for labrequest in labrequests %}
-            <tr>
-                <td>
-                    {{ labrequest.lab_test.name }}
-                </td>
-                <td>
-                    <input type="text"name="result_{{ labrequest.id }}"value="{{ labrequest.result.result }}">
-                </td>
-                <td>
-                    {{ labrequest.result.get_status_display }}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <br>
-    <button type="submit">Save All Results</button>
+{% if grouped_requests %}
 
-</form>
-    
+    {% for group in grouped_requests %}
+        <h3>Requested:{{ group.request_group|naturaltime}}</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Lab Test</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for labrequest in group.requests %}
+                    <tr>
+                        <td>
+                            {{ labrequest.lab_test.name }}
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                name="result_{{ labrequest.id }}"
+                                value="{{ labrequest.result.result }}">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <button type="submit">Send Result</button>
+
+        </form>
+    {% endfor %}
+{% else %}
+    <p>No pending lab requests.</p>
+{% endif %}
 </body>
 </html>

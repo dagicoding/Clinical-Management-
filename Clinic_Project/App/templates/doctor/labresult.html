@@ -1,3 +1,4 @@
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,26 +16,45 @@
     <title>Lab Result</title>
 </head>
 <body>
-   
-    <table>
+   <h2>Patient: {{ visit.patient.name }}</h2>
+{% for group in grouped_results %}
+    <h3>
+        Requested:
+        {{ group.request_group|naturaltime }}
+    </h3>
+
+    <table border="1">
         <thead>
             <tr>
-                <th>Request</th>
+                <th>Lab Test</th>
                 <th>Result</th>
+                <th>Status</th>
             </tr>
         </thead>
-        {% for labresult in labresults %}
-            <tbody>
+        <tbody>
+            {% for labresult in group.results %}
                 <tr>
-                    <td>{{labresult.lab_request.lab_test.name}}</td>
-                    <td>{{labresult.result}}</td>
+                    <td>
+                        {{ labresult.lab_request.lab_test.name }}
+                    </td>
+                    <td>
+                        {{ labresult.result }}
+                    </td>
+                    <td>
+                        {{ labresult.get_status_display }}
+                    </td>
                 </tr>
-            </tbody>
-        {% empty %}
-                <p>no lab result avaliable</p>
             {% endfor %}
+        </tbody>
     </table>
 
+    <br>
+
+{% empty %}
+
+    <p>No lab results available.</p>
+
+{% endfor %}
     
     
 </body>

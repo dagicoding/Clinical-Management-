@@ -124,6 +124,7 @@ class LabRequest(models.Model):
     lab_test = models.ForeignKey(LabTest, on_delete=models.CASCADE, related_name='request')
     status_choice = [('not_paid', 'Not Paid'),('paid' , 'Paid')]
     status = models.CharField(choices=status_choice, default='not_paid')
+    request_group = models.DateTimeField()
     requested_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -153,8 +154,9 @@ class PrescriptionTemplate(models.Model):
 
 
 class Prescription(models.Model):
-    visit = models.OneToOneField(Visit, on_delete=models.CASCADE)
-    prescription = models.ForeignKey(PrescriptionTemplate, on_delete=models.CASCADE, related_name='prescriptions')
+    visit = models.ForeignKey(Visit,on_delete=models.CASCADE,related_name='prescriptions')
+    prescription_template = models.ForeignKey(PrescriptionTemplate,on_delete=models.CASCADE,related_name='prescriptions')
+    prescription_group = models.DateTimeField()
     prescribed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -39,4 +39,4 @@ class LabResultForm(forms.ModelForm):
 class PrescriptionForm(forms.ModelForm):
     class Meta:
         model = Prescription
-        fields = ['prescription']
+        fields = ['prescription_template']

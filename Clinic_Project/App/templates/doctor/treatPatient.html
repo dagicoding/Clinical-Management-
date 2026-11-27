@@ -69,6 +69,10 @@
     <a href="{% url 'prescription' visit.id %}">prescription</a>
     <a href="#">Medication</a>
     <a href="#">Certificate</a>
+    <form action = "{% url 'completeVisit' visit.id %}" method = "POST">
+        {% csrf_token %}
+        <button type = 'submit'>Complete</button>
+    </form>
     
 </body>
 </html>
