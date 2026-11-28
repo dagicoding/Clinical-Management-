@@ -453,6 +453,38 @@ def medicationView(request, visit_id):
     return render(request, 'doctor/medication.html',context)
 
 
+def certificateView(request, visit_id):
+    visit = Visit.objects.get(id=visit_id,status='doctor')
+    certificate = Certificate.objects.get(visit = visit)
+    
+    if request.method == "POST":
+    
+            if hasattr(visit, 'certificate'):
+                form = CertificateForm(request.POST,instance=visit.certificate)
+            else:
+                form = CertificateForm(request.POST)
+    
+            if form.is_valid():
+                certificate = form.save(commit=False)
+                certificate.visit = visit
+                certificate.save()
+    
+                return redirect('treatPatient',visit_id=visit.id)
+    else:
+    
+            if hasattr(visit, 'certificate'):
+                form = CertificateForm(instance=visit.certificate)
+            else:
+                form = CertificateForm()
+    
+    context = {'form': form,'visit': visit, 'certificate' : certificate}
+    return render(request,'doctor/certificate.html',context)
+
+def certificatePrint(request, visit_id):
+    visit = Visit.objects.get(id = visit_id)
+
+    context = {'visit' : visit}
+    return render(request, 'doctor/certificateprint.html', context)
     
 
         

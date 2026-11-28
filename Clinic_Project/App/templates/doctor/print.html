@@ -70,6 +70,12 @@
       margin-top: auto;
       padding-top: 8px;
     }
+    label{
+      font-weight: 500;
+    }
+    b{
+      font-weight:bold;
+    }
 
     @media print {
       body {
@@ -93,7 +99,7 @@
 </head>
 <body>
   <div class="a6-page">
-    <h1 style="font-size: 22px; margin: 0;">Elroi Medium Clinic Hawassa</h1>
+    <h1 style="font-size: 22px; margin: 0; font-weight: bold;">Elroi Medium Clinic Hawassa</h1>
     <div class="top">
       <label>Addis ketema subcity near selam Grocery</label><br>
       <label>Mob - 0946555575</label>
@@ -130,7 +136,7 @@
       <div class="lower">
         <div class="sign">
           <p style="margin: 0;">Dr. Signature: ___________</p>
-          <p style="margin: 4px 0 0 0;">Date: ___________</p>
+          <p style="margin: 4px 0 0 0;">Date: <label style="font-size: 13px; border-bottom: 1px solid black;">{{visit.visit_date}}</label></p>
         </div>
         <div class="fotter">
           <hr>

@@ -52,3 +52,8 @@ class MedicationForm(forms.ModelForm):
     class Meta:
         model = Medication
         fields = ['medication_name','price']
+
+class CertificateForm(forms.ModelForm):
+    class Meta:
+        model = Certificate
+        fields = ['diagnosis','doctors_recommendation','days_of_rest']

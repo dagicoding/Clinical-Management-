@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A6 Document</title>
+  <style>
+    @page {
+      size: A6 portrait;
+      margin: 8mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: #f0f0f0;
+      font-family:'Times New Roman', Times, serif;
+    }
+
+    .a6-page {
+      width: 105mm;
+      height: 148mm;
+      padding: 8mm;
+      margin: 0 auto;
+      background: #ffffff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top {
+      font-size: 12px;
+      margin-top: -2px;
+      margin-bottom: 8px;
+    }
+
+    hr {
+      border: none;
+      border-top: 4px solid rgb(0, 0, 0);
+      border-bottom: 2px solid black;
+      height: 8px;
+      margin: 6px 0;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .prescription {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      margin-top: 4px;
+    }
+    .prescription p{
+      font-style: italic;
+    }
+
+    .list {
+      margin: 4px 0;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .lower {
+      margin-top: auto;
+      padding-top: 8px;
+    }
+    label{
+      font-weight: 500;
+    }
+    b{
+      font-weight:bold;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+        background: none;
+      }
+
+      .a6-page {
+        width: 89mm;
+        height: 132mm;
+        padding: 0;
+        margin: 0;
+      }
+
+      .prescription {
+        overflow: visible;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="a6-page">
+    <h1 style="font-size: 22px; margin: 0; font-weight: bold;">Elroi Medium Clinic Hawassa</h1>
+    <div class="top">
+      <label>Addis ketema subcity near selam Grocery</label><br>
+      <label>Mob - 0946555575</label>
+    </div>
+
+    <div class="content">
+      <h3 style="text-align: center; margin: 0 0 4px 0;">Medical Certificate</h3>
+      <hr>
+      <div class="patient" style="font-size: 14px; display: flex; justify-content: center;">
+        <table border="1" width="100%" style="border-collapse: collapse;">
+          <tr>
+            <td colspan="2" width="50%"><b>Name: </b>{{visit.patient.name}}</td>
+            <td width="50%"><b>Phone: </b>{{visit.patient.phone}}</td>
+          </tr>
+          <tr>
+            <td width="25%"><b>Age: </b>0</td>
+            <td width="25%"><b>Sex: </b>{{visit.patient.sex}}</td>
+            <td width="50%"><b>City: </b>{{visit.patient.city}}</td>
+          </tr>
+          <tr>
+            <td colspan="2" width="50%"><b>Dx: </b></td>
+            <td width="50%"><b>Allergy: </b>{{visit.patient.allergy}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="prescription">
+        <h3 style="margin: 8px 0 4px 0;">Diagnosis:</h3>
+        <p>{{certificate.diagnosis}}</p>
+
+        <h3 style="margin: 8px 0 4px 0;">Doctor's Recommendation:</h3>
+        <p>{{certificate.doctors_recommendation}}</p>
+
+        <h3 style="margin: 8px 0 4px 0;">Days of Rest:</h3>
+        <p>{{certificate.days_of_rest}}</p>
+      </div>
+
+      <div class="lower">
+        <div class="sign">
+          <p style="margin: 0;">Dr.Name and Signature: ___________</p>
+          <p style="margin: 4px 0 0 0;">Date: <label style="font-size: 13px; border-bottom: 1px solid black;">{{certificate.created_date}}</label></p>
+        </div>
+        <div class="fotter">
+          <hr>
+          <p style="margin: 0; font-size: 12px;">Thank you for visiting us! Get well soon!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        window.print();
+      }, 100);
+    };
+  </script>
+</body>
+</html>
