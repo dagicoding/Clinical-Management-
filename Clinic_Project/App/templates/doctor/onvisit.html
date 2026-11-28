@@ -7,9 +7,9 @@
 </head>
 <body>
     <h1>Hi, doctor</h1>
+<div class="contanier" style = "display:flex; gap:5px; wrap:wrap; padding:10px;">
 {% for visit in visits %}
-<div class="form-group"
-     style="border:1px solid black; width:200px; padding:10px;">
+<div class="form-group"style="border:1px solid black; width:200px; padding:10px;">
     <label>Patient name: {{ visit.patient.name }}</label>
     <br>
 
@@ -28,7 +28,9 @@
 
 </div>
 
+
 {% endfor %}
+</div>
     
 </body>
 </html>

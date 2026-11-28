@@ -21,7 +21,14 @@ urlpatterns = [
     path('lab_requests/<int:visit_id>/',views.labrequestdetail,name='labrequestdetail'),
     path('labresult/<int:visit_id>/', views.labResult, name = 'labresults'),
     path('prescription/<int:visit_id>/',views.prescription,name='prescription'),
+    path('prescriptionlines/', views.prescriptionlines, name = 'prescriptionlines'),
     path('add-prescription/<int:visit_id>/',views.add_prescription,name='add_prescription'),
     path('delete-prescription/<int:visit_id>/<int:prescription_id>/',views.delete_prescription,name='delete_prescription'),
     path('save-prescription/<int:visit_id>/',views.save_prescription,name='save_prescription'),
+    path('print/<int:visit_id>/<int:prescription_id>/',views.print_prescription,name='print_prescription'),
+    path('medication/<int:visit_id>/', views.medicationView, name = 'medication'),
+    path('medicationPayList/', views.medicationpayment, name = 'medicationPayList'),
+    path('medicationPaydetail/<int:visit_id>/', views.medicationPaydetail, name = 'medicationpaydetail'),
+    path('medicationConfirm/<int:visit_id>/', views.medicationconfirm, name = 'medicationConfirm'),
+
 ]

@@ -40,3 +40,15 @@ class PrescriptionForm(forms.ModelForm):
     class Meta:
         model = Prescription
         fields = ['prescription_template']
+
+
+class PrescriptionLineForm(forms.ModelForm):
+    class Meta:
+        model = PrescriptionTemplate
+        fields = ['name']
+
+
+class MedicationForm(forms.ModelForm):
+    class Meta:
+        model = Medication
+        fields = ['medication_name','price']

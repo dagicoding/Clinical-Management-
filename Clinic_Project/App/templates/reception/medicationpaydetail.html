@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication pay detail</title>
+</head>
+<body>
+    <h2>Medication payment for {{visit.patient.name}}</h2>
+    {% for medication in medications  %}
+        <p>{{medication.medication_name}}</p>
+        <h4>Total: {{medication.price}}</h4>
+        <form action="{% url 'medicationConfirm' medication.visit_id %}" method = "POST">
+            {% csrf_token %}
+            <button type = "submit">Confirm</button>
+        </form>
+        <a href="#">delete</a>
+    {% endfor %}
+
+
+</body>
+</html>

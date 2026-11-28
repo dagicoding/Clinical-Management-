@@ -29,50 +29,28 @@
 
 <body>
 
-<h3>
-    Prescription for {{ visit.patient.name }}
-</h3>
+<h3>Prescription for {{ visit.patient.name }}</h3>
 
 
 <!-- SAVED PRESCRIPTION GROUPS -->
 
 {% for group in grouped_prescriptions %}
-
     <div class="prescription-card">
-
-        <h4>
-          {{ visit.patient.name }} 
-        </h4>
-
-        <p>
-            {{ group.prescription_group|naturaltime}}
-        </p>
+        <h4>{{ visit.patient.name }} </h4>
+        <p>{{ group.prescription_group|naturaltime}}</p>
 
         <button
             type="button"
             onclick="showPrescription('{{ forloop.counter }}')">
-
             View Prescription
-
         </button>
 
-
-        <!-- PRESCRIPTIONS INSIDE THIS GROUP -->
-
-        <div
-            id="prescription-{{ forloop.counter }}"
-            class="prescription-list">
-
+        <div id="prescription-{{ forloop.counter }}"class="prescription-list">
             {% for prescription in group.prescriptions %}
-
-                <p>
-                    {{ prescription.prescription_template.name }}
-                </p>
-
+                <p>{{ prescription.prescription_template.name }}</p>
             {% endfor %}
-
+             <a href="{% url 'print_prescription' visit.id group.prescriptions.0.id %}">Print</a>
         </div>
-
     </div>
 
 {% empty %}
@@ -81,6 +59,19 @@
 
 {% endfor %}
 
+
+<form method="POST" action="{% url 'prescriptionlines' %}">
+    {% csrf_token %}
+    <input type="hidden" name="visit_id" value="{{ visit.id }}">
+
+    <input
+        type="text"
+        name="name"
+        placeholder="Enter prescription"
+        required
+    >
+    <button type="submit">Add Prescription</button>
+</form>
 
 
 <!-- ADD PRESCRIPTION -->
@@ -103,14 +94,9 @@
             <option value="{{ prescription.id }}">
                 {{ prescription.name }}
             </option>
-
         {% endfor %}
-
     </select>
-
-    <button type="submit">
-        Add
-    </button>
+    <button type="submit">Add</button>
 
 </form>
 
@@ -119,18 +105,11 @@
 <!-- CURRENT CART -->
 
 <h3>Selected Prescriptions</h3>
-
 {% for prescription in selected_prescriptions %}
-
     <p>
-
         {{ prescription.name }}
-
-        <a href="{% url 'delete_prescription' visit.id prescription.id %}">
-            Remove
-        </a>
-
-    </p>
+        <a href="{% url 'delete_prescription' visit.id prescription.id %}">Remove</a>
+</p>
 
 {% empty %}
 
@@ -146,38 +125,26 @@
 
     <form method="POST"
           action="{% url 'save_prescription' visit.id %}">
-
         {% csrf_token %}
-
-        <button type="submit">
-            Save Prescriptions
-        </button>
-
+        <button type="submit">Save Prescriptions</button>
     </form>
 
 {% endif %}
-
 
 
 <script>
 
 function showPrescription(id) {
 
-    const selected = document.getElementById(
-        "prescription-" + id
-    );
+    const selected = document.getElementById("prescription-" + id);
 
     if (selected.style.display === "none" ||
-        selected.style.display === "") {
-
-        selected.style.display = "block";
-
+        selected.style.display === "") {selected.style.display = "block";
+    
     } else {
 
         selected.style.display = "none";
-
     }
-
 }
 
 </script>

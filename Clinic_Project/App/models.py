@@ -167,6 +167,8 @@ class Medication(models.Model):
     visit = models.ForeignKey(Visit, on_delete=models.CASCADE)
     medication_name = models.CharField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    status_choice = [('not_paid' , 'Not Paid'), ('paid' ,'Paid')]
+    status = models.CharField(max_length=10, default='Not Paid')
 
     def __str__(self):
         return self.medication_name
